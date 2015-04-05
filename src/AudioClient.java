@@ -6,7 +6,7 @@ import java.io.File;
 
 public interface AudioClient {
 
-    long requestID();
+    String requestUniqueID();
 
     boolean firstToConnect();
 

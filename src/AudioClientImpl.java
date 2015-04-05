@@ -10,11 +10,10 @@ import java.net.Socket;
 
 public class AudioClientImpl implements AudioClient {
 
-
-
     @Override
-    public long requestID() {
-        return 0;
+    public String requestUniqueID() {
+        String message = "requestUID";
+        return(message);
     }
 
     @Override

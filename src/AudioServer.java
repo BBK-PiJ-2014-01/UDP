@@ -16,7 +16,7 @@ public class AudioServer implements AudioService {
     }
 
     @Override
-    public int generatorID() {
-        return 0;
+    public String generateUniqueID() {
+        return "";
     }
 }

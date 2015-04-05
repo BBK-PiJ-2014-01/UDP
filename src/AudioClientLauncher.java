@@ -15,12 +15,16 @@ public class AudioClientLauncher {
 
     private void launch() {
         try {
+            // Creating the client object
+            AudioClient ac = new AudioClientImpl();
             // Opening connection to server on Port 2000
-            Socket socket = new Socket("localhost", 2000);
+            Socket client = new Socket("localhost", 2000);
             // Establishing input and output streams for communication with the server
-            DataInputStream inputStream = new DataInputStream(socket.getInputStream());
-            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
-            //long id = requestID();
+            DataInputStream fromServerStream = new DataInputStream(client.getInputStream());
+            DataOutputStream toServerStream = new DataOutputStream(client.getOutputStream());
+            // Requests a unique ID
+            toServerStream.writeBytes(ac.requestUniqueID());
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }

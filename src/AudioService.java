@@ -12,6 +12,6 @@ public interface AudioService {
 
     void listenerUDP();
 
-    int generatorID();
+    String generateUniqueID();
 
 }
