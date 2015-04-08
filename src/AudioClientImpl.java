@@ -16,8 +16,9 @@ public class AudioClientImpl implements AudioClient {
     }
 
     @Override
-    public boolean firstToConnect() {
-        return false;
+    public String firstToConnect() {
+        String message = "requestRole";
+        return(message);
     }
 
     @Override

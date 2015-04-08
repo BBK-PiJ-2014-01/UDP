@@ -13,7 +13,14 @@ public interface AudioClient {
      */
     String requestUniqueID();
 
-    boolean firstToConnect();
+    /**
+     * Requests which process (sending or receiving) is assigned, based on first to connect to the server or not.
+     * If the client is first to connect, it is assigned a sender process
+     * If the client is not first to connect, it is assigned a receiver process
+     *
+     * @return message request for role assignment.
+     */
+    String firstToConnect();
 
     void sendAudio(File audioFile);
 
