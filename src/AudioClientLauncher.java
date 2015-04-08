@@ -23,8 +23,11 @@ public class AudioClientLauncher {
             DataInputStream fromServerStream = new DataInputStream(client.getInputStream());
             DataOutputStream toServerStream = new DataOutputStream(client.getOutputStream());
             // Requests a unique ID
-            toServerStream.writeBytes(ac.requestUniqueID());
+            toServerStream.writeUTF(ac.requestUniqueID());
 
+            fromServerStream.close();
+            toServerStream.close();
+            client.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }

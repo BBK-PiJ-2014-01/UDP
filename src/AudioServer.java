@@ -2,6 +2,8 @@
  * Created by Pierre on 02/04/2015.
  */
 
+import java.util.UUID;
+
 public class AudioServer implements AudioService {
 
 
@@ -17,6 +19,7 @@ public class AudioServer implements AudioService {
 
     @Override
     public String generateUniqueID() {
-        return "";
+        UUID uniqueID = UUID.randomUUID();
+        return (uniqueID.toString());
     }
 }

@@ -6,6 +6,11 @@ import java.io.File;
 
 public interface AudioClient {
 
+    /**
+     * Requests for a unique ID
+     *
+     * @return message request for a unique ID.
+     */
     String requestUniqueID();
 
     boolean firstToConnect();
