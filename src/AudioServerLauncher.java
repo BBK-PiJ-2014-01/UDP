@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class AudioServerLauncher {
+
     public static void main(String[] args) {
         AudioServerLauncher asl = new AudioServerLauncher();
         asl.launch();
@@ -16,7 +17,7 @@ public class AudioServerLauncher {
 
     private void launch(){
         // Creating the server object
-        AudioService as = new AudioServer();
+        AudioServer as = new AudioServer();
         // Opening connection to clients on Port 2000
         try(ServerSocket server = new ServerSocket(2000)) {
             System.out.println("AudioServer started...");
@@ -31,8 +32,12 @@ public class AudioServerLauncher {
                     if (line.equals("requestUID")) {
                         String uniqueID = as.generateUniqueID();
                         toClientStream.writeUTF(uniqueID + '\n');
-                        System.out.println(uniqueID);
+                        System.out.println("Client ID assigned: "+uniqueID);
+                        if (as.getClientSenderID().equals(""))
+                            as.setClientSenderID(uniqueID);
+
                     }
+                    //if (line.equals("requestRole"))
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();

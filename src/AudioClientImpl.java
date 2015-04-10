@@ -11,6 +11,20 @@ import java.io.IOException;
 
 public class AudioClientImpl implements AudioClient {
 
+    private String clientID;
+
+    private String getClientID() {
+        return(clientID);
+    }
+
+    private void setClientID(String id) {
+        clientID = id;
+    }
+
+    public AudioClientImpl(){
+        setClientID("");
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -20,17 +34,26 @@ public class AudioClientImpl implements AudioClient {
         return(message);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String firstToConnect() {
         String message = "requestRole";
         return(message);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void sendAudio(File audioFile) {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public File receiveAudio() {
         return null;
