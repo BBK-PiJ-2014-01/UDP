@@ -25,8 +25,6 @@ public class AudioClientLauncher {
             DataOutputStream toServerStream = new DataOutputStream(client.getOutputStream());
             // Requests a unique ID
             toServerStream.writeUTF(ac.requestUniqueID());
-            File audioFile = new File("./firetrucks.wav");
-            ac.playAudio(audioFile);
 
             /*
             fromServerStream.close();
