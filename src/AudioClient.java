@@ -26,6 +26,11 @@ public interface AudioClient {
 
     File receiveAudio();
 
+    /**
+     * Plays an audio file (Format .WAV)
+     *
+     * @param audioFile audio file to be played by the client
+     */
     void playAudio(File audioFile);
 
 }

@@ -4,6 +4,7 @@
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -24,10 +25,14 @@ public class AudioClientLauncher {
             DataOutputStream toServerStream = new DataOutputStream(client.getOutputStream());
             // Requests a unique ID
             toServerStream.writeUTF(ac.requestUniqueID());
+            File audioFile = new File("c:/firetrucks.wav");
+            ac.playAudio(audioFile);
 
+            /*
             fromServerStream.close();
             toServerStream.close();
             client.close();
+            */
         } catch (IOException ex) {
             ex.printStackTrace();
         }

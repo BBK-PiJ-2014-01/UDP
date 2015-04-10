@@ -30,12 +30,12 @@ public class AudioServerLauncher {
                     String line = fromClientStream.readUTF();
                     if (line.equals("requestUID")) {
                         String uniqueID = as.generateUniqueID();
-                        toClientStream.writeUTF(uniqueID);
+                        toClientStream.writeUTF(uniqueID + '\n');
                         System.out.println(uniqueID);
                     }
                 }
             } catch (IOException ex) {
-                ex.getMessage();
+                ex.printStackTrace();
             }
         } catch (IOException ex) {
             ex.getMessage();
