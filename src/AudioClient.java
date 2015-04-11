@@ -6,6 +6,10 @@ import java.io.File;
 
 public interface AudioClient {
 
+    String getClientID();
+
+    void setClientID(String id);
+
     /**
      * Requests for a unique ID
      *

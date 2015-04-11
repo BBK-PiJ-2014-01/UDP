@@ -24,13 +24,20 @@ public class AudioClientLauncher {
             DataInputStream fromServerStream = new DataInputStream(client.getInputStream());
             DataOutputStream toServerStream = new DataOutputStream(client.getOutputStream());
             // Requests a unique ID
+            System.out.println("[Request Server] Unique ID...");
             toServerStream.writeUTF(ac.requestUniqueID());
+            ac.setClientID(fromServerStream.readUTF());
+            System.out.println("[Response Server] Assigned ID: "+ac.getClientID());
+            // Requests if first to connect
+            System.out.println("[Request Server] Connection position...");
+            toServerStream.writeUTF(ac.firstToConnect());
+            String position = fromServerStream.readUTF();
+            System.out.println("[Response Server] Position: "+position);
 
-            /*
             fromServerStream.close();
             toServerStream.close();
             client.close();
-            */
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }

@@ -16,6 +16,10 @@ public class AudioServer implements AudioService {
         clientSenderID = id;
     }
 
+    public AudioServer() {
+        setClientSenderID("");
+    }
+
     @Override
     public void listenerTCP() {
 

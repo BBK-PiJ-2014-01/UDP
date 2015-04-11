@@ -13,11 +13,11 @@ public class AudioClientImpl implements AudioClient {
 
     private String clientID;
 
-    private String getClientID() {
+    public String getClientID() {
         return(clientID);
     }
 
-    private void setClientID(String id) {
+    public void setClientID(String id) {
         clientID = id;
     }
 
@@ -30,7 +30,7 @@ public class AudioClientImpl implements AudioClient {
      */
     @Override
     public String requestUniqueID() {
-        String message = "requestUID";
+        String message = "requestUUID";
         return(message);
     }
 
@@ -39,7 +39,7 @@ public class AudioClientImpl implements AudioClient {
      */
     @Override
     public String firstToConnect() {
-        String message = "requestRole";
+        String message = "requestROLE"+clientID;
         return(message);
     }
 

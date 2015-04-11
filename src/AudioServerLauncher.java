@@ -29,15 +29,24 @@ public class AudioServerLauncher {
             {
                 while (true) {
                     String line = fromClientStream.readUTF();
-                    if (line.equals("requestUID")) {
+                    if (line.substring(0,11).equals("requestUUID")) {
                         String uniqueID = as.generateUniqueID();
-                        toClientStream.writeUTF(uniqueID + '\n');
+                        toClientStream.writeUTF(uniqueID);
                         System.out.println("Client ID assigned: "+uniqueID);
                         if (as.getClientSenderID().equals(""))
                             as.setClientSenderID(uniqueID);
 
                     }
-                    //if (line.equals("requestRole"))
+                    if (line.substring(0,11).equals("requestROLE")) {
+                        String requestingClientID = line.substring(11);
+                        String position = null;
+                        if (requestingClientID.equals(as.getClientSenderID()))
+                            position = "1";
+                        else
+                            position = "0";
+                        System.out.println(position);
+                        toClientStream.writeUTF(position);
+                    }
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
