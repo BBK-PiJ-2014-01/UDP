@@ -12,7 +12,10 @@ public class TestFileFactory {
     public void tests_fileIsSplitInChunks() {
         AudioClient ac = new AudioClientImpl();
         File audioFile = new File("./firetrucks.wav");
-        File[] fileArray = FileFactory.split(audioFile,32768);
+        byte[] fileChunks = FileFactory.toByteArray(audioFile);
+        File newFile = new File("./newfile.wav");
 
+        newFile = FileFactory.fromByteArray(fileChunks, newFile.getPath());
+        ac.playAudio(newFile);
     }
 }

@@ -6,40 +6,38 @@ import java.io.*;
 
 public interface FileFactory {
 
-    static File[] split(File inputFile, int chunkByteSize) {
-        byte[] buffer = new byte[chunkByteSize];
-        int chunkNumber = 0;
-        int chunkMaxNumber = (int) inputFile.length()/chunkByteSize;
-        File[] chunkedFile = new File[chunkMaxNumber+1];
-
-        try(BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(inputFile))) {
+    static byte[] toByteArray(File inputFile) {
+        byte[] buffer = new byte[1024];
+        byte[] byteArray = null;
+        try(BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(inputFile));
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();) {
             int bytesRead = 0;
             while((bytesRead = inputStream.read(buffer)) > 0) {
-                File outputFile = new File(inputFile.getName() + chunkNumber);
-                try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-                    outputStream.write(buffer, 0, bytesRead);
-                    chunkedFile[chunkNumber] = outputFile;
-                }
-                chunkNumber++;
+                outputStream.write(buffer);
+            }
+            byteArray = outputStream.toByteArray();
+        } catch (FileNotFoundException ex) {
+            System.out.println("File not found!");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return(byteArray);
+    }
+
+    static File fromByteArray(byte[] byteArray, String outputFilePath) {
+        byte[] buffer = new byte[1024];
+        File outputFile = new File(outputFilePath);
+        try(ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArray);
+            BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile))) {
+            int bytesRead = 0;
+            while((bytesRead = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer);
             }
         } catch (FileNotFoundException ex) {
             System.out.println("File not found!");
         } catch (IOException ex) {
             ex.printStackTrace();
-        };
-        return(chunkedFile);
-    };
-
-    static File merge(File[] chunks) {
-        File outputFile = null;
-        try(BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile))) {
-
-        } catch (FileNotFoundException ex) {
-            System.out.println("File not found!");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        };
-        return(null);
-    };
-
+        }
+        return(outputFile);
+    }
 }
