@@ -26,7 +26,7 @@ public interface AudioClient {
      */
     String firstToConnect();
 
-    void sendAudio(File audioFile);
+    void sendAudio(File audioFile, int packetSize);
 
     File receiveAudio();
 

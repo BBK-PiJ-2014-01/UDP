@@ -33,7 +33,10 @@ public class AudioClientLauncher {
             toServerStream.writeUTF(ac.firstToConnect());
             String position = fromServerStream.readUTF();
             System.out.println("[Response Server] Position: "+position);
-
+            if (position.equals("1")) {
+                File audioFile = new File("./firetrucks.wav");
+                ac.sendAudio(audioFile,1024);
+            }
             fromServerStream.close();
             toServerStream.close();
             client.close();

@@ -8,6 +8,8 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
+import java.net.*;
+import java.util.Arrays;
 
 public class AudioClientImpl implements AudioClient {
 
@@ -47,8 +49,38 @@ public class AudioClientImpl implements AudioClient {
      * {@inheritDoc}
      */
     @Override
-    public void sendAudio(File audioFile) {
+    public void sendAudio(File audioFile, int packetSize) {
+        try (DatagramSocket clientSocket = new DatagramSocket()) {
+            InetAddress IPAddress = InetAddress.getByName("localhost");
+            byte[] dataToTransfer = FileFactory.toByteArray(audioFile);
+            byte[] interimPacket = null;
+            byte[] receiveData = new byte[1024];
 
+            //int packetCountMax = dataToTransfer.length / packetSize;
+            //System.out.println(packetCountMax);
+
+            boolean finished = false;
+            int i=0;
+            do {
+                    interimPacket = Arrays.copyOfRange(dataToTransfer, i*packetSize, (i+1)*packetSize);
+                    DatagramPacket sendPacket = new DatagramPacket(interimPacket, interimPacket.length, IPAddress, 5000);
+                    clientSocket.send(sendPacket);
+                    if (i*packetSize > dataToTransfer.length)
+                        finished = true;
+            }while(!finished);
+
+                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                clientSocket.receive(receivePacket);
+                String modifiedSentence = new String(receivePacket.getData());
+                System.out.println("FROM SERVER:" + modifiedSentence);
+
+        } catch (SocketException ex) {
+            System.out.println(ex.getMessage());
+        } catch (UnknownHostException ex) {
+            System.out.println("Host exception");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
