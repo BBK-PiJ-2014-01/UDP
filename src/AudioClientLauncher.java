@@ -42,7 +42,7 @@ public class AudioClientLauncher {
             client.close();
 
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
         }
     }
 }

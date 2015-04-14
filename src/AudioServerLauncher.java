@@ -16,45 +16,26 @@ public class AudioServerLauncher {
     }
 
     private void launch(){
-        // Creating the server object
-        AudioServer as = new AudioServer();
+
         // Opening connection to clients on Port 2000
         try(ServerSocket server = new ServerSocket(2000)) {
             System.out.println("AudioServer started...");
-            // Waiting for the client connection
-            try(Socket client = server.accept();
-                // Establishing input and output streams for communication with the client
-                DataInputStream fromClientStream = new DataInputStream(client.getInputStream());
-                DataOutputStream toClientStream = new DataOutputStream(client.getOutputStream()))
-            {
-                while (true) {
-                    String line = fromClientStream.readUTF();
-                    if (line.substring(0,11).equals("requestUUID")) {
-                        String uniqueID = as.generateUniqueID();
-                        toClientStream.writeUTF(uniqueID);
-                        System.out.println("Client ID assigned: "+uniqueID);
-                        if (as.getClientSenderID().equals(""))
-                            as.setClientSenderID(uniqueID);
-
-                    }
-                    if (line.substring(0,11).equals("requestROLE")) {
-                        String requestingClientID = line.substring(11);
-                        String position = null;
-                        if (requestingClientID.equals(as.getClientSenderID()))
-                            position = "1";
-                        else
-                            position = "0";
-                        System.out.println(position);
-                        toClientStream.writeUTF(position);
-                    }
+            while (true) {
+                Socket client = null;
+                try {
+                    // Waiting for the client connection
+                    client = server.accept();
+                    // Placing client connection in a separate thread
+                    AudioServerClientHandler newClient = new AudioServerClientHandler(client);
+                    Thread newThread = new Thread(newClient);
+                    newThread.start();
+                } catch (IOException ex) {
+                    System.out.println(ex.getMessage());
                 }
-            } catch (IOException ex) {
-                ex.printStackTrace();
             }
         } catch (IOException ex) {
-            ex.getMessage();
+            System.out.println(ex.getMessage());
         }
-
     }
 
 }
