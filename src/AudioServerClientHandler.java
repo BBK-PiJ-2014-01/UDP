@@ -40,26 +40,30 @@ public class AudioServerClientHandler implements Runnable, AudioService {
         try(DataInputStream fromClientStream = new DataInputStream(getClientSocket().getInputStream());
             DataOutputStream toClientStream = new DataOutputStream(getClientSocket().getOutputStream())) {
 
-            String line = fromClientStream.readUTF();
-            if (line.substring(0, 11).equals("requestUUID")) {
-                String uniqueID = generateUniqueID();
-                toClientStream.writeUTF(uniqueID);
-                System.out.println("Client ID assigned: " + uniqueID);
-                if (getClientSenderID().equals(""))
-                    setClientSenderID(uniqueID);
+            String line = "";
+            while (!line.equals("closeCONNECTION")) {
 
-            }
-            if (line.substring(0, 11).equals("requestROLE")) {
-                String requestingClientID = line.substring(11);
-                String position = null;
-                if (requestingClientID.equals(getClientSenderID()))
-                    position = "1";
-                else
-                    position = "0";
-                System.out.println(position);
-                toClientStream.writeUTF(position);
-            }
+                line = fromClientStream.readUTF();
 
+                if (line.substring(0, 11).equals("requestUUID")) {
+                    String uniqueID = generateUniqueID();
+                    toClientStream.writeUTF(uniqueID);
+                    System.out.println("Client ID assigned: " + uniqueID);
+                    if (getClientSenderID().equals(""))
+                        setClientSenderID(uniqueID);
+
+                }
+                if (line.substring(0, 11).equals("requestROLE")) {
+                    String requestingClientID = line.substring(11);
+                    String position = null;
+                    if (requestingClientID.equals(getClientSenderID()))
+                        position = "1";
+                    else
+                        position = "0";
+                    System.out.println(position);
+                    toClientStream.writeUTF(position);
+                }
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }

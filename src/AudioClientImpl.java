@@ -41,7 +41,7 @@ public class AudioClientImpl implements AudioClient {
      */
     @Override
     public String firstToConnect() {
-        String message = "requestROLE"+clientID;
+        String message = "requestROLE"+getClientID();
         return(message);
     }
 
