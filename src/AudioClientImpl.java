@@ -49,30 +49,40 @@ public class AudioClientImpl implements AudioClient {
      * {@inheritDoc}
      */
     @Override
-    public void sendAudio(File audioFile, int packetSize) {
+    public void sendAudio(File audioFile, int packetSize, int maxAttempt) {
+
         try (DatagramSocket clientSocket = new DatagramSocket()) {
             InetAddress IPAddress = InetAddress.getByName("localhost");
             byte[] dataToTransfer = FileFactory.toByteArray(audioFile);
             byte[] interimPacket = null;
-            byte[] receiveData = new byte[1024];
-
-            //int packetCountMax = dataToTransfer.length / packetSize;
-            //System.out.println(packetCountMax);
-
+            byte[] receiveData = new byte[12];
             boolean finished = false;
             int i=0;
             do {
-                    interimPacket = Arrays.copyOfRange(dataToTransfer, i*packetSize, (i+1)*packetSize);
+                interimPacket = Arrays.copyOfRange(dataToTransfer, i*packetSize, (i+1)*packetSize);
+                String serverReply = null;
+                int attempt = 0;
+                do {
                     DatagramPacket sendPacket = new DatagramPacket(interimPacket, interimPacket.length, IPAddress, 5000);
                     clientSocket.send(sendPacket);
-                    if (i*packetSize > dataToTransfer.length)
-                        finished = true;
+                    attempt++;
+                    System.out.println(attempt);
+                    //clientSocket.setSoTimeout(1000);
+                    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                    clientSocket.receive(receivePacket);
+                    serverReply = new String(receivePacket.getData());
+                    System.out.println("FROM SERVER:" + serverReply);
+                } while(!serverReply.equals("ACKNOWLEDGED"));
+                if ((i+1)*packetSize > dataToTransfer.length)
+                    finished = true;
+                i++;
             }while(!finished);
 
-                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                clientSocket.receive(receivePacket);
-                String modifiedSentence = new String(receivePacket.getData());
-                System.out.println("FROM SERVER:" + modifiedSentence);
+            String message = "COMPLETED";
+            byte[] clientMessage = message.getBytes();
+            DatagramPacket sendPacket = new DatagramPacket(clientMessage, clientMessage.length, IPAddress, 5000);
+            clientSocket.send(sendPacket);
+            System.out.println("File uploaded!");
 
         } catch (SocketException ex) {
             System.out.println(ex.getMessage());
