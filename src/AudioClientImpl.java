@@ -9,6 +9,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class AudioClientImpl implements AudioClient {
@@ -55,19 +56,21 @@ public class AudioClientImpl implements AudioClient {
             InetAddress IPAddress = InetAddress.getByName("localhost");
             byte[] dataToTransfer = FileFactory.toByteArray(audioFile);
             byte[] interimPacket = null;
+            byte[] sendData = null;
             byte[] receiveData = new byte[12];
             boolean finished = false;
             int i=0;
             do {
                 interimPacket = Arrays.copyOfRange(dataToTransfer, i*packetSize, (i+1)*packetSize);
+                byte[] interimPacketLength = ByteBuffer.allocate(4).putInt(interimPacket.length).array();
+                sendData = FileFactory.concatenateByteArrays(interimPacketLength,interimPacket);
                 String serverReply = null;
                 int attempt = 0;
                 do {
-                    DatagramPacket sendPacket = new DatagramPacket(interimPacket, interimPacket.length, IPAddress, 5000);
+                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 5000);
                     clientSocket.send(sendPacket);
                     attempt++;
                     System.out.println(attempt);
-                    //clientSocket.setSoTimeout(1000);
                     DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                     clientSocket.receive(receivePacket);
                     serverReply = new String(receivePacket.getData());
@@ -80,7 +83,9 @@ public class AudioClientImpl implements AudioClient {
 
             String message = "COMPLETED";
             byte[] clientMessage = message.getBytes();
-            DatagramPacket sendPacket = new DatagramPacket(clientMessage, clientMessage.length, IPAddress, 5000);
+            byte[] interimPacketLength = ByteBuffer.allocate(4).putInt(clientMessage.length).array();
+            sendData = FileFactory.concatenateByteArrays(interimPacketLength,clientMessage);
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 5000);
             clientSocket.send(sendPacket);
             System.out.println("File uploaded!");
 

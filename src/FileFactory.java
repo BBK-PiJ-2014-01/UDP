@@ -40,4 +40,11 @@ public interface FileFactory {
         }
         return(outputFile);
     }
+
+    static byte[] concatenateByteArrays(byte[] byteArray1, byte[] byteArray2 ) {
+        byte[] newByteArray = new byte[byteArray1.length + byteArray2.length];
+        System.arraycopy(byteArray1, 0, newByteArray, 0, byteArray1.length);
+        System.arraycopy(byteArray2, 0, newByteArray, byteArray1.length, byteArray2.length);
+        return(newByteArray);
+    }
 }

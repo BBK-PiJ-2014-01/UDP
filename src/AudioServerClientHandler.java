@@ -7,6 +7,8 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class AudioServerClientHandler implements Runnable, AudioService {
@@ -89,23 +91,18 @@ public class AudioServerClientHandler implements Runnable, AudioService {
                 byte[] sendData;
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 serverSocket.receive(receivePacket);
-
-                String fromClient = new String(receivePacket.getData());
-                fromClientTrimmed = fromClient.trim();
-                clientMessage = fromClientTrimmed.getBytes();
-                System.out.println(clientMessage.length);
-
+                byte[] fromClient = receivePacket.getData();
+                byte[] dataPacketSize = Arrays.copyOfRange(fromClient,0,4);
+                int dataSize = ByteBuffer.wrap(dataPacketSize).getInt();
+                clientMessage = Arrays.copyOfRange(fromClient,4,dataSize+4);
+                fromClientTrimmed= new String(clientMessage);
                 if (!fromClientTrimmed.equals("COMPLETED")) {
                     if ((dataToReceive != null)) {
                         byte[] interim = dataToReceive;
-                        dataToReceive = new byte[dataToReceive.length + clientMessage.length];
-                        System.arraycopy(interim, 0, dataToReceive, 0, interim.length);
-                        System.arraycopy(clientMessage, 0, dataToReceive, interim.length, clientMessage.length);
+                        dataToReceive = FileFactory.concatenateByteArrays(interim,clientMessage);
                     } else
                         dataToReceive = clientMessage;
                 }
-                System.out.println("cumul: " + dataToReceive.length);
-                receivedFile = FileFactory.fromByteArray(dataToReceive,"./new.wav");
                 InetAddress IPAddress = receivePacket.getAddress();
                 int port = receivePacket.getPort();
                 String serverMessage = "ACKNOWLEDGED";
@@ -115,7 +112,8 @@ public class AudioServerClientHandler implements Runnable, AudioService {
 
 
             } while (!fromClientTrimmed.equals("COMPLETED"));
-            System.out.println("File uploaded");
+            System.out.println("File uploaded: Size: "+dataToReceive.length);
+            receivedFile = FileFactory.fromByteArray(dataToReceive,"./new.wav");
         }catch (SocketException ex) {
             System.out.println(ex.getMessage());
         }catch (IOException ex) {
