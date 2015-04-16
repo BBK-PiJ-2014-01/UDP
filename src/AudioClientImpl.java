@@ -61,8 +61,12 @@ public class AudioClientImpl implements AudioClient {
             boolean finished = false;
             int i=0;
             do {
-                interimPacket = Arrays.copyOfRange(dataToTransfer, i*packetSize, (i+1)*packetSize);
+                if(((i+1)*packetSize) <= dataToTransfer.length)
+                    interimPacket = Arrays.copyOfRange(dataToTransfer, i*packetSize, (i+1)*packetSize);
+                else
+                    interimPacket = Arrays.copyOfRange(dataToTransfer, i*packetSize, dataToTransfer.length);
                 byte[] interimPacketLength = ByteBuffer.allocate(4).putInt(interimPacket.length).array();
+                System.out.println(interimPacket.length);
                 sendData = FileFactory.concatenateByteArrays(interimPacketLength,interimPacket);
                 String serverReply = null;
                 int attempt = 0;
