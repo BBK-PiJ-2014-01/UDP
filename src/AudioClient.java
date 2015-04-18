@@ -26,10 +26,6 @@ public interface AudioClient {
      */
     String firstToConnect();
 
-    void sendAudio(File audioFile, int packetSize, int maxAttempt);
-
-    File receiveAudio();
-
     /**
      * Plays an audio file (Format .WAV)
      *

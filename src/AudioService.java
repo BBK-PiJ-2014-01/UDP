@@ -11,8 +11,6 @@ import java.io.File;
 
 public interface AudioService {
 
-    File receiveAudioFile();
-
     void listenerUDP();
 
     String generateUniqueID();

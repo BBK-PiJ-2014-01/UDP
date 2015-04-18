@@ -37,7 +37,7 @@ public class AudioClientLauncher {
 
             if (position.equals("1")) {
                 File audioFile = new File("C:/firetrucks.wav");
-                ac.sendAudio(audioFile,1024*32,5);
+                UDPFileTransfer.send(audioFile,1024*32,5);
             }
 
             toServerStream.writeUTF("closeCONNECTION");
