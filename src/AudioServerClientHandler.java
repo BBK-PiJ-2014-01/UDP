@@ -81,14 +81,14 @@ public class AudioServerClientHandler implements Runnable, AudioService {
                 if (line.substring(0, 11).equals("getPROTOCOL")) {
                     replyMessage = "UDP";
                     toClientStream.writeUTF(replyMessage);
-                    System.out.println("Protocol requested: "+replyMessage);
+                    System.out.println("Protocol requested: " + replyMessage);
+                    if (clientPosition.equals("FIRST")) {
+                        nextRelayedAudioFile = UDPFileTransfer.receive();
+                        setClientSenderID("");
+                    } else {
+                        UDPFileTransfer.send(relayedAudioFile, 10000, 5);
+                    }
                 }
-                if (clientPosition.equals("FIRST")) {
-                    nextRelayedAudioFile = UDPFileTransfer.receive();
-                    setClientSenderID("");
-                }
-                else
-                    UDPFileTransfer.send(relayedAudioFile,10000,5);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
