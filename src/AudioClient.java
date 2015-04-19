@@ -37,6 +37,13 @@ public interface AudioClient {
     String firstToConnect();
 
     /**
+     * Requests which communication protocol to use for sending/receiving audio files
+     *
+     * @return message request for communication protocol to use.
+     */
+    String getProtocol();
+
+    /**
      * Plays an audio file (Format .WAV)
      *
      * @param audioFile audio file to be played by the client

@@ -25,10 +25,20 @@ public class AudioServerClientHandler implements Runnable, AudioService {
         clientSenderID = id;
     }
 
+    /**
+     * Sets the client socket
+     *
+     * @param socket the client socket
+     */
     public void setClientSocket(Socket socket) {
         clientSocket = socket;
     }
 
+    /**
+     * Returns the client socket
+     *
+     * @return the client socket
+     */
     public Socket getClientSocket() {
         return(clientSocket);
     }
@@ -45,6 +55,9 @@ public class AudioServerClientHandler implements Runnable, AudioService {
             DataOutputStream toClientStream = new DataOutputStream(getClientSocket().getOutputStream())) {
 
             String line = "";
+            String clientPosition = "";
+            String replyMessage = "";
+
             while (!line.equals("closeCONNECTION")) {
 
                 line = fromClientStream.readUTF();
@@ -55,19 +68,27 @@ public class AudioServerClientHandler implements Runnable, AudioService {
                     System.out.println("Client ID assigned: " + uniqueID);
                     if (getClientSenderID().equals(""))
                         setClientSenderID(uniqueID);
-
                 }
                 if (line.substring(0, 11).equals("requestROLE")) {
                     String requestingClientID = line.substring(11);
-                    String position = null;
-                    if (requestingClientID.equals(getClientSenderID())) {
-                        position = "1";
-                        toClientStream.writeUTF(position);
-                        nextRelayedAudioFile = UDPFileTransfer.receive();
-                    } else {
-                        position = "0";
-                    }
+                    if (requestingClientID.equals(getClientSenderID()))
+                        clientPosition = "FIRST";
+                    else
+                        clientPosition = "NOT FIRST";
+                    System.out.println("Client Id="+requestingClientID+" position: "+clientPosition);
+                    toClientStream.writeUTF(clientPosition);
                 }
+                if (line.substring(0, 11).equals("getPROTOCOL")) {
+                    replyMessage = "UDP";
+                    toClientStream.writeUTF(replyMessage);
+                    System.out.println("Protocol requested: "+replyMessage);
+                }
+                if (clientPosition.equals("FIRST")) {
+                    nextRelayedAudioFile = UDPFileTransfer.receive();
+                    setClientSenderID("");
+                }
+                else
+                    UDPFileTransfer.send(relayedAudioFile,10000,5);
             }
         } catch (IOException ex) {
             ex.printStackTrace();

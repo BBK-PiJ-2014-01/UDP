@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class AudioClientLauncher {
+
+    File receivedFile = new File("C:/ReceivedFile");
+
     public static void main(String[] args) {
         AudioClientLauncher acl = new AudioClientLauncher();
         acl.launch();
@@ -33,14 +36,25 @@ public class AudioClientLauncher {
             toServerStream.writeUTF(ac.firstToConnect());
             String position = fromServerStream.readUTF();
             System.out.println("[Response Server] Position: "+position);
-
-
-            if (position.equals("1")) {
-                File audioFile = new File("C:/firetrucks.wav");
-                UDPFileTransfer.send(audioFile,1024*32,5);
+            // Requests which communication protocol to use for file transfer
+            System.out.println("[Request Server] Protocol?...");
+            toServerStream.writeUTF(ac.getProtocol());
+            String protocol = fromServerStream.readUTF();
+            System.out.println("[Response Server] Protocol: "+protocol);
+            if (protocol.equals("UDP")) {
+                if (position.equals("FIRST")) {
+                    File audioFile = new File("C:/firetrucks.wav");
+                    UDPFileTransfer.send(audioFile, 1024 * 32, 5);
+                }
+                if (position.equals("NOT FIRST")) {
+                    receivedFile = UDPFileTransfer.receive();
+                }
+            } else {
+                System.out.println("Protocol "+protocol+ " not supported by this client");
             }
 
             toServerStream.writeUTF("closeCONNECTION");
+            System.out.println("Connection closed");
             fromServerStream.close();
             toServerStream.close();
             client.close();

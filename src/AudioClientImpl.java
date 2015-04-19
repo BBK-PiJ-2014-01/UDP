@@ -56,6 +56,15 @@ public class AudioClientImpl implements AudioClient {
      * {@inheritDoc}
      */
     @Override
+    public String getProtocol() {
+        String message = "getPROTOCOL";
+        return(message);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void playAudio(File audioFile) {
         try {
             Clip clip = AudioSystem.getClip();
