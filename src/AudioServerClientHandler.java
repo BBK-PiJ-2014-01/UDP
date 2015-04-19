@@ -7,14 +7,12 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.UUID;
 
 public class AudioServerClientHandler implements Runnable, AudioService {
 
-    private File relayFile = null;
-    private File toBeRelayedFile = null;
+    private File relayedAudioFile = new File("./relayedFile.wav");
+    private File nextRelayedAudioFile = new File("./nextRelayedFile.wav");
 
     private String clientSenderID = null;
     private Socket clientSocket = null;
@@ -65,8 +63,7 @@ public class AudioServerClientHandler implements Runnable, AudioService {
                     if (requestingClientID.equals(getClientSenderID())) {
                         position = "1";
                         toClientStream.writeUTF(position);
-                        File receivedFile = new File("./new.wav");
-                        receivedFile = UDPFileTransfer.receive();
+                        nextRelayedAudioFile = UDPFileTransfer.receive();
                     } else {
                         position = "0";
                     }

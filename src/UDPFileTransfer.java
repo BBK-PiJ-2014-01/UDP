@@ -10,6 +10,8 @@ import java.util.Arrays;
 
 public interface UDPFileTransfer {
 
+    final int maxSendingAttempt = 5;
+
     static void send(File audioFile, int packetSize, int maxAttempt) {
 
         try (DatagramSocket clientSocket = new DatagramSocket()) {

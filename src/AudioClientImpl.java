@@ -16,10 +16,16 @@ public class AudioClientImpl implements AudioClient {
 
     private String clientID;
 
+    /**
+     * {@inheritDoc}
+     */
     public String getClientID() {
         return(clientID);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setClientID(String id) {
         clientID = id;
     }

@@ -6,6 +6,8 @@ import java.io.*;
 
 public interface FileFactory {
 
+    final int maxSendingAttempt = 5;
+
     static byte[] toByteArray(File inputFile) {
         byte[] buffer = new byte[1024];
         byte[] byteArray = null;
@@ -46,5 +48,6 @@ public interface FileFactory {
         System.arraycopy(byteArray1, 0, newByteArray, 0, byteArray1.length);
         System.arraycopy(byteArray2, 0, newByteArray, byteArray1.length, byteArray2.length);
         return(newByteArray);
+
     }
 }

@@ -6,8 +6,18 @@ import java.io.File;
 
 public interface AudioClient {
 
+    /**
+     * Returns the client unique ID
+     *
+     * @return client unique ID.
+     */
     String getClientID();
 
+    /**
+     * Sets the client unique ID
+     *
+     * @param id the client unique ID.
+     */
     void setClientID(String id);
 
     /**
