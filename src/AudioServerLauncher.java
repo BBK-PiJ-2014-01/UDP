@@ -1,9 +1,9 @@
 /**
  * Created by Pierre on 03/04/2015.
+ * Audio server launcher.
+ * Listen for TCP connection and place further handling of connected client in a separate thread
  */
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -37,5 +37,4 @@ public class AudioServerLauncher {
             System.out.println(ex.getMessage());
         }
     }
-
 }
