@@ -12,7 +12,13 @@ public interface UDPFileTransfer {
 
     final int maxSendingAttempt = 3;
     final int packetSize = 1024 * 32;
+    final int portNumber = 5000;
 
+    /**
+     * Sends a file to a receiver on Port 5000, using the UDP protocol
+     *
+     * @param audioFile file transferred
+     */
     static void send(File audioFile) {
 
         try (DatagramSocket sendingSocket = new DatagramSocket()) {
@@ -34,7 +40,7 @@ public interface UDPFileTransfer {
                 String receiverReply = null;
                 int attempt = 0;
                 do {
-                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 5000);
+                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, portNumber);
                     sendingSocket.send(sendPacket);
                     attempt++;
                     DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
@@ -51,7 +57,7 @@ public interface UDPFileTransfer {
             byte[] clientMessage = message.getBytes();
             byte[] interimPacketLength = ByteBuffer.allocate(4).putInt(clientMessage.length).array();
             sendData = FileFactory.concatenateByteArrays(interimPacketLength,clientMessage);
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 5000);
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, portNumber);
             sendingSocket.send(sendPacket);
             System.out.println("File uploaded!");
 
@@ -64,11 +70,16 @@ public interface UDPFileTransfer {
         }
     }
 
+    /**
+     * Receives a file from a sender on Port 5000, using the UDP protocol
+     *
+     * @return file received
+     */
     static File receive() {
         File receivedFile = null;
         byte[] dataToReceive = null;
 
-        try(DatagramSocket receivingSocket = new DatagramSocket(5000)) {
+        try(DatagramSocket receivingSocket = new DatagramSocket(portNumber)) {
 
             byte[] senderMessage;
             String fromSenderTrimmed;

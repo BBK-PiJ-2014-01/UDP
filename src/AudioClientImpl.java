@@ -8,9 +8,6 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
-import java.net.*;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 public class AudioClientImpl implements AudioClient {
 
@@ -30,6 +27,10 @@ public class AudioClientImpl implements AudioClient {
         clientID = id;
     }
 
+    /**
+     * Constructor for the class AudioClientImpl
+     * Initialise the client ID to 'blank'
+     */
     public AudioClientImpl(){
         setClientID("");
     }

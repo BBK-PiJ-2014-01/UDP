@@ -17,10 +17,20 @@ public class AudioServerClientHandler implements Runnable, AudioService {
     private String clientSenderID = null;
     private Socket clientSocket = null;
 
+    /**
+     * Returns the client ID currently in first position and sending an audio file
+     *
+     * @return client sender unique ID.
+     */
     public String getClientSenderID() {
         return(clientSenderID);
     }
 
+    /**
+     * Sets the client ID currently in first position and sending an audio file
+     *
+     * @param id the client sender unique ID.
+     */
     public void setClientSenderID(String id) {
         clientSenderID = id;
     }
