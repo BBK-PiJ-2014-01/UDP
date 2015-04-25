@@ -10,15 +10,16 @@ import java.util.Arrays;
 
 public interface UDPFileTransfer {
 
-    final int maxSendingAttempt = 5;
+    final int maxSendingAttempt = 3;
+    final int packetSize = 1024 * 32;
 
-    static void send(File audioFile, int packetSize, int maxAttempt) {
+    static void send(File audioFile) {
 
-        try (DatagramSocket clientSocket = new DatagramSocket()) {
+        try (DatagramSocket sendingSocket = new DatagramSocket()) {
             InetAddress IPAddress = InetAddress.getByName("localhost");
             byte[] dataToTransfer = FileFactory.toByteArray(audioFile);
-            byte[] interimPacket = null;
-            byte[] sendData = null;
+            byte[] interimPacket;
+            byte[] sendData;
             byte[] receiveData = new byte[12];
             boolean finished = false;
             int i=0;
@@ -28,20 +29,19 @@ public interface UDPFileTransfer {
                 else
                     interimPacket = Arrays.copyOfRange(dataToTransfer, i*packetSize, dataToTransfer.length);
                 byte[] interimPacketLength = ByteBuffer.allocate(4).putInt(interimPacket.length).array();
-                System.out.println(interimPacket.length);
+                System.out.println("Packet length: "+interimPacket.length);
                 sendData = FileFactory.concatenateByteArrays(interimPacketLength,interimPacket);
-                String serverReply = null;
+                String receiverReply = null;
                 int attempt = 0;
                 do {
                     DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 5000);
-                    clientSocket.send(sendPacket);
+                    sendingSocket.send(sendPacket);
                     attempt++;
-                    System.out.println(attempt);
                     DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                    clientSocket.receive(receivePacket);
-                    serverReply = new String(receivePacket.getData());
-                    System.out.println("FROM SERVER:" + serverReply);
-                } while(!serverReply.equals("ACKNOWLEDGED"));
+                    sendingSocket.receive(receivePacket);
+                    receiverReply = new String(receivePacket.getData());
+                    System.out.println("FROM RECEIVER:" + receiverReply);
+                } while(!receiverReply.equals("ACKNOWLEDGED")||(attempt == maxSendingAttempt));
                 if ((i+1)*packetSize > dataToTransfer.length)
                     finished = true;
                 i++;
@@ -52,7 +52,7 @@ public interface UDPFileTransfer {
             byte[] interimPacketLength = ByteBuffer.allocate(4).putInt(clientMessage.length).array();
             sendData = FileFactory.concatenateByteArrays(interimPacketLength,clientMessage);
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 5000);
-            clientSocket.send(sendPacket);
+            sendingSocket.send(sendPacket);
             System.out.println("File uploaded!");
 
         } catch (SocketException ex) {
@@ -68,36 +68,36 @@ public interface UDPFileTransfer {
         File receivedFile = null;
         byte[] dataToReceive = null;
 
-        try(DatagramSocket serverSocket = new DatagramSocket(5000)) {
+        try(DatagramSocket receivingSocket = new DatagramSocket(5000)) {
 
-            byte[] clientMessage;
-            String fromClientTrimmed;
+            byte[] senderMessage;
+            String fromSenderTrimmed;
             do {
                 byte[] receiveData = new byte[64000];
                 byte[] sendData;
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                serverSocket.receive(receivePacket);
-                byte[] fromClient = receivePacket.getData();
-                byte[] dataPacketSize = Arrays.copyOfRange(fromClient, 0, 4);
+                receivingSocket.receive(receivePacket);
+                byte[] fromSender = receivePacket.getData();
+                byte[] dataPacketSize = Arrays.copyOfRange(fromSender, 0, 4);
                 int dataSize = ByteBuffer.wrap(dataPacketSize).getInt();
-                clientMessage = Arrays.copyOfRange(fromClient,4,dataSize+4);
-                fromClientTrimmed= new String(clientMessage);
-                if (!fromClientTrimmed.equals("COMPLETED")) {
+                senderMessage = Arrays.copyOfRange(fromSender,4,dataSize+4);
+                fromSenderTrimmed= new String(senderMessage);
+                if (!fromSenderTrimmed.equals("COMPLETED")) {
                     if ((dataToReceive != null)) {
                         byte[] interim = dataToReceive;
-                        dataToReceive = FileFactory.concatenateByteArrays(interim,clientMessage);
+                        dataToReceive = FileFactory.concatenateByteArrays(interim,senderMessage);
                     } else
-                        dataToReceive = clientMessage;
+                        dataToReceive = senderMessage;
                 }
                 InetAddress IPAddress = receivePacket.getAddress();
                 int port = receivePacket.getPort();
-                String serverMessage = "ACKNOWLEDGED";
-                sendData = serverMessage.getBytes();
+                String receiverMessage = "ACKNOWLEDGED";
+                sendData = receiverMessage.getBytes();
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
-                serverSocket.send(sendPacket);
+                receivingSocket.send(sendPacket);
 
 
-            } while (!fromClientTrimmed.equals("COMPLETED"));
+            } while (!fromSenderTrimmed.equals("COMPLETED"));
             System.out.println("File uploaded: Size: "+dataToReceive.length);
             receivedFile = FileFactory.fromByteArray(dataToReceive,"./new.wav");
         }catch (SocketException ex) {

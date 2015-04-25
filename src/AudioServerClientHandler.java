@@ -86,7 +86,7 @@ public class AudioServerClientHandler implements Runnable, AudioService {
                         nextRelayedAudioFile = UDPFileTransfer.receive();
                         setClientSenderID("");
                     } else {
-                        UDPFileTransfer.send(relayedAudioFile, 10000, 5);
+                        UDPFileTransfer.send(relayedAudioFile);
                     }
                 }
             }

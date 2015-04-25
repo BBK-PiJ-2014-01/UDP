@@ -44,7 +44,7 @@ public class AudioClientLauncher {
             if (protocol.equals("UDP")) {
                 if (position.equals("FIRST")) {
                     File audioFile = new File("C:/firetrucks.wav");
-                    UDPFileTransfer.send(audioFile, 1024 * 32, 5);
+                    UDPFileTransfer.send(audioFile);
                 }
                 if (position.equals("NOT FIRST")) {
                     receivedFile = UDPFileTransfer.receive();
