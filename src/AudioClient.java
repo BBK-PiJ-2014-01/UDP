@@ -5,11 +5,13 @@
  * The client will either send or receive an audio file (.wav format) depending on whether it is
  * first to connect to the service.
  *
- * Three sets of methods:
+ * Four sets of methods:
  * - Getter and setter for the Unique client ID provided by the server
  *      getClientID(), setClientID()
- * - Methods supporting the communication protocol with the server
+ * - Methods supporting the messaging protocol with the server over TCP/IP
  *      requestUniqueID(), firstToConnect(), getProtocol(), notifyClosingConnection()
+ * - Method supporting the transfer of audio files with the server over UDP
+ *      audioFileTransfer()
  * - Method to play audio files (.wav format) received from the server
  *      playAudio()
  */
@@ -73,5 +75,19 @@ public interface AudioClient {
      * @param audioFile audio file to be played by the client
      */
     void playAudio(File audioFile);
+
+    /**
+     * Based on its position in the server queue, the client:
+     * - sends an audio file to server if server notified client, it was first to connect (protocol message =  "FIRST")
+     * - listens for an audio file from server if server notified client it was not first to connect (protocol message "NOT FIRST")
+     * Once an audio file has been fully received, the client plays it.
+     *
+     * In its current version, the client can only handle UDP communication protocol for transferring files.
+     * If the server requested another protocol, the client outputs an error message.
+     *
+     * @param protocol communication protocol the client is required to use to transfer files
+     * @param position client position
+     */
+    void audioFileTransfer(String protocol, String position);
 
 }

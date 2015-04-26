@@ -14,6 +14,7 @@ import java.io.IOException;
 public class AudioClientImpl implements AudioClient {
 
     private String clientID;
+    File receivedFile;
 
     /**
      * {@inheritDoc}
@@ -95,6 +96,24 @@ public class AudioClientImpl implements AudioClient {
             System.out.println(ex.getMessage());
         } catch (IOException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void audioFileTransfer(String protocol, String position) {
+        if (protocol.equals("UDP")) {
+            if (position.equals("FIRST")) {
+                File audioFile = new File("C:/firetrucks.wav");
+                UDPFileTransfer.send(audioFile);
+            }
+            if (position.equals("NOT FIRST")) {
+                receivedFile = UDPFileTransfer.receive();
+            }
+        } else {
+            System.out.println("Protocol "+protocol+ " not supported by this client");
         }
     }
 }

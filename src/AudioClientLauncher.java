@@ -12,13 +12,11 @@
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 
 public class AudioClientLauncher {
 
-    File receivedFile;
     final int portNumberTCP = 2000;
 
     public static void main(String[] args) {
@@ -55,17 +53,7 @@ public class AudioClientLauncher {
             System.out.println("[Response Server] Protocol: "+protocol);
 
             // STEP4: Sends or receives audio file based on position & communication protocol provided by the server
-            if (protocol.equals("UDP")) {
-                if (position.equals("FIRST")) {
-                    File audioFile = new File("C:/firetrucks.wav");
-                    UDPFileTransfer.send(audioFile);
-                }
-                if (position.equals("NOT FIRST")) {
-                    receivedFile = UDPFileTransfer.receive();
-                }
-            } else {
-                System.out.println("Protocol "+protocol+ " not supported by this client");
-            }
+            ac.audioFileTransfer(protocol, position);
 
             // STEP5: Notifies the server the end of the client connection
             toServerStream.writeUTF(ac.notifyClosingConnection());
