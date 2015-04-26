@@ -32,4 +32,8 @@ Step 5:
 
 Screenshots of an example available in the Word document "ScreenShots.docx"
 
+Testing threading proved very difficult.
+The current TestThread generates 10 threads.
+When test launched, no failure identified so far with transfer files going either way (client <-> server).
+
 
