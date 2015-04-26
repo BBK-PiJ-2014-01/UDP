@@ -10,9 +10,7 @@
 import java.io.File;
 
 public interface AudioService {
-
-    void listenerUDP();
-
+    
     String generateUniqueID();
 
 }

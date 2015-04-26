@@ -95,13 +95,11 @@ public class AudioServerClientHandler implements Runnable, AudioService {
                     System.out.println("Protocol requested: " + replyMessage);
                     if (clientPosition.equals("FIRST")) {
                         nextRelayedAudioFile = UDPFileTransfer.receive();
-                        System.out.println("xxx"+nextRelayedAudioFile.toPath());
                         try {
                             //relayedAudioFile.createNewFile();
                             Files.copy(nextRelayedAudioFile.toPath(),relayedAudioFile.toPath());
 
                         } catch(IOException ex) {
-                            //System.out.println(ex.getMessage());
                             ex.printStackTrace();
                         }
                         setClientSenderID("");
@@ -113,11 +111,6 @@ public class AudioServerClientHandler implements Runnable, AudioService {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-    }
-
-    @Override
-    public void listenerUDP() {
-
     }
 
     @Override
