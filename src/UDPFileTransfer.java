@@ -14,14 +14,15 @@ import java.util.Arrays;
 
 public interface UDPFileTransfer {
 
-    final int maxSendingAttempt = 3;
-    final int packetSize = 1024 * 32;
-    final int portNumberUDP = 5000;
+    final int MAX_SENDING_ATTEMPT = 3;
+    final int LATENCY = 100;
+    final int PACKET_SIZE = 1024 * 32;
+    final int PORT_NUMBER_UDP = 5000;
 
     /**
      * Sends a file in chunks of 32768 bytes to a receiver on Port 5000, using the UDP protocol
      * To make sure the receiver receives all data packets and in order, the client:
-     * - waits receipt acknowledgement from the receiver after each data packet
+     * - waits for receipt acknowledgement from the receiver after each data packet (wait expressed in millisecond)
      * - attempts a maximum of three times sending the data packet again if no acknowledgement is received
      *
      * @param audioFile file transferred
@@ -37,25 +38,30 @@ public interface UDPFileTransfer {
             boolean finished = false;
             int i=0;
             do {
-                if(((i+1)*packetSize) <= dataToTransfer.length)
-                    interimPacket = Arrays.copyOfRange(dataToTransfer, i*packetSize, (i+1)*packetSize);
+                if(((i+1)*PACKET_SIZE) <= dataToTransfer.length)
+                    interimPacket = Arrays.copyOfRange(dataToTransfer, i*PACKET_SIZE, (i+1)*PACKET_SIZE);
                 else
-                    interimPacket = Arrays.copyOfRange(dataToTransfer, i*packetSize, dataToTransfer.length);
+                    interimPacket = Arrays.copyOfRange(dataToTransfer, i*PACKET_SIZE, dataToTransfer.length);
                 byte[] interimPacketLength = ByteBuffer.allocate(4).putInt(interimPacket.length).array();
                 System.out.println("Packet length: "+interimPacket.length);
                 sendData = FileFactory.concatenateByteArrays(interimPacketLength,interimPacket);
                 String receiverReply = null;
                 int attempt = 0;
                 do {
-                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, portNumberUDP);
+                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, PORT_NUMBER_UDP);
                     sendingSocket.send(sendPacket);
                     attempt++;
+                    try {
+                        Thread.sleep(LATENCY);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
                     DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                     sendingSocket.receive(receivePacket);
                     receiverReply = new String(receivePacket.getData());
                     System.out.println("FROM RECEIVER:" + receiverReply);
-                } while(!receiverReply.equals("ACKNOWLEDGED")||(attempt == maxSendingAttempt));
-                if ((i+1)*packetSize > dataToTransfer.length)
+                } while(!receiverReply.equals("ACKNOWLEDGED")||(attempt == MAX_SENDING_ATTEMPT));
+                if ((i+1)*PACKET_SIZE > dataToTransfer.length)
                     finished = true;
                 i++;
             }while(!finished);
@@ -64,7 +70,7 @@ public interface UDPFileTransfer {
             byte[] clientMessage = message.getBytes();
             byte[] interimPacketLength = ByteBuffer.allocate(4).putInt(clientMessage.length).array();
             sendData = FileFactory.concatenateByteArrays(interimPacketLength,clientMessage);
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, portNumberUDP);
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, PORT_NUMBER_UDP);
             sendingSocket.send(sendPacket);
             System.out.println("File uploaded!");
 
@@ -86,7 +92,7 @@ public interface UDPFileTransfer {
         File receivedFile = null;
         byte[] dataToReceive = null;
 
-        try(DatagramSocket receivingSocket = new DatagramSocket(portNumberUDP)) {
+        try(DatagramSocket receivingSocket = new DatagramSocket(PORT_NUMBER_UDP)) {
 
             byte[] senderMessage;
             String fromSenderTrimmed;

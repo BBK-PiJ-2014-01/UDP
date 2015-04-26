@@ -17,7 +17,7 @@ import java.net.Socket;
 
 public class AudioClientLauncher {
 
-    final int portNumberTCP = 2000;
+    final int PORT_NUMBER_TCP = 2000;
 
     public static void main(String[] args) {
         AudioClientLauncher acl = new AudioClientLauncher();
@@ -28,7 +28,7 @@ public class AudioClientLauncher {
 
         try (
             // Opening connection to server on Port 2000
-            Socket client = new Socket("localhost", portNumberTCP);
+            Socket client = new Socket("localhost", PORT_NUMBER_TCP);
             // Establishing input and output streams for communication with the server
             DataInputStream fromServerStream = new DataInputStream(client.getInputStream());
             DataOutputStream toServerStream = new DataOutputStream(client.getOutputStream());)
