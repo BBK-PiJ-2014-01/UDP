@@ -18,7 +18,7 @@ import java.util.UUID;
 public class AudioServerClientHandler implements Runnable, AudioService {
 
     private File relayedAudioFile = new File("./relayedFile.wav");
-    private File nextRelayedAudioFile = new File("./nextRelayedFile.wav");
+    private File nextRelayedAudioFile;
 
     private Socket clientSocket = null;
     private String clientSenderID = null;
@@ -64,10 +64,7 @@ public class AudioServerClientHandler implements Runnable, AudioService {
      * {@inheritDoc}
      */
     public void setClientFirst(String position) {
-        if (position.equals("FIRST"))
-            clientFirst = true;
-        else
-            clientFirst = false;
+        clientFirst = position.equals("FIRST");
     }
 
     /**
