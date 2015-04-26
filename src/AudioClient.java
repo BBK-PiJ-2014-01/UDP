@@ -1,5 +1,17 @@
 /**
  * Created by Pierre on 03/04/2015.
+ *
+ * Interface definition for a client class connecting to the Audio server
+ * The client will either send or receive an audio file (.wav format) depending on whether it is
+ * first to connect to the service.
+ *
+ * Three sets of methods:
+ * - Getter and setter for the Unique client ID provided by the server
+ *      getClientID(), setClientID()
+ * - Methods supporting the communication protocol with the server
+ *      requestUniqueID(), firstToConnect(), getProtocol()
+ * - Method to play audio files (.wav format) received from the server
+ *      playAudio()
  */
 
 import java.io.File;

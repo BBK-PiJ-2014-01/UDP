@@ -4,6 +4,7 @@
  * Listen for TCP connection and place further handling of connected client in a separate thread
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

@@ -106,8 +106,6 @@ public interface UDPFileTransfer {
                 sendData = receiverMessage.getBytes();
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
                 receivingSocket.send(sendPacket);
-
-
             } while (!fromSenderTrimmed.equals("COMPLETED"));
             System.out.println("File uploaded: Size: "+dataToReceive.length);
             receivedFile = FileFactory.fromByteArray(dataToReceive,"./new.wav");

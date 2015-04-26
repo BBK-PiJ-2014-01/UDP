@@ -7,6 +7,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.*;
+import java.nio.file.Files;
 import java.util.UUID;
 
 public class AudioServerClientHandler implements Runnable, AudioService {
@@ -94,6 +95,15 @@ public class AudioServerClientHandler implements Runnable, AudioService {
                     System.out.println("Protocol requested: " + replyMessage);
                     if (clientPosition.equals("FIRST")) {
                         nextRelayedAudioFile = UDPFileTransfer.receive();
+                        System.out.println("xxx"+nextRelayedAudioFile.toPath());
+                        try {
+                            //relayedAudioFile.createNewFile();
+                            Files.copy(nextRelayedAudioFile.toPath(),relayedAudioFile.toPath());
+
+                        } catch(IOException ex) {
+                            //System.out.println(ex.getMessage());
+                            ex.printStackTrace();
+                        }
                         setClientSenderID("");
                     } else {
                         UDPFileTransfer.send(relayedAudioFile);
