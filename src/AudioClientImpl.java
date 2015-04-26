@@ -106,7 +106,7 @@ public class AudioClientImpl implements AudioClient {
                 UDPFileTransfer.send(audioFile);
             }
             if (position.equals("NOT FIRST")) {
-                receivedFile = UDPFileTransfer.receive();
+                receivedFile = UDPFileTransfer.receive("./FromServer"+getClientID()+".wav");
                 playAudio(receivedFile);
             }
         } else {

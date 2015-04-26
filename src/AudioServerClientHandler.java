@@ -161,7 +161,7 @@ public class AudioServerClientHandler implements Runnable, AudioService {
     @Override
     public void audioFileTransfer() {
         if (getClientFirst()) {
-            nextRelayedAudioFile = UDPFileTransfer.receive();
+            nextRelayedAudioFile = UDPFileTransfer.receive("./"+getClientSenderID()+".wav");
             try {
                 Files.deleteIfExists(relayedAudioFile.toPath());
                 Files.copy(nextRelayedAudioFile.toPath(),relayedAudioFile.toPath());

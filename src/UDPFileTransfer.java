@@ -14,15 +14,15 @@ import java.util.Arrays;
 
 public interface UDPFileTransfer {
 
-    final int MAX_SENDING_ATTEMPT = 3;
-    final int LATENCY = 100;
-    final int PACKET_SIZE = 1024 * 32;
-    final int PORT_NUMBER_UDP = 5000;
+    final int MAX_SENDING_ATTEMPT = 3;  // Maximum number of attempts, the same data packet is sent to receiver
+    final int LATENCY = 100;            // Time waited in milliseconds before checking the receiver acknowledgement
+    final int PACKET_SIZE = 1024 * 32;  // Maximum size of a data packet
+    final int PORT_NUMBER_UDP = 5000;   // Port number used for UDP connection
 
     /**
-     * Sends a file in chunks of 32768 bytes to a receiver on Port 5000, using the UDP protocol
+     * Sends a file in chunks of 32768 bytes to a receiver on "Local Host" - Port 5000, using the UDP protocol
      * To make sure the receiver receives all data packets and in order, the client:
-     * - waits for receipt acknowledgement from the receiver after each data packet (wait expressed in millisecond)
+     * - waits for receipt acknowledgement from the receiver after each data packet
      * - attempts a maximum of three times sending the data packet again if no acknowledgement is received
      *
      * @param audioFile file transferred
@@ -86,9 +86,10 @@ public interface UDPFileTransfer {
     /**
      * Receives a file from a sender on Port 5000, using the UDP protocol
      *
+     * @param filePath filePath to allocate to the received file
      * @return file received
      */
-    static File receive() {
+    static File receive(String filePath) {
         File receivedFile = null;
         byte[] dataToReceive = null;
 
@@ -121,7 +122,7 @@ public interface UDPFileTransfer {
                 receivingSocket.send(sendPacket);
             } while (!fromSenderTrimmed.equals("COMPLETED"));
             System.out.println("File uploaded: Size: "+dataToReceive.length);
-            receivedFile = FileFactory.fromByteArray(dataToReceive,"./new.wav");
+            receivedFile = FileFactory.fromByteArray(dataToReceive,filePath);
         }catch (SocketException ex) {
             System.out.println(ex.getMessage());
         }catch (IOException ex) {
