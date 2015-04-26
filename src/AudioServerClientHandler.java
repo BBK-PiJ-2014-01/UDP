@@ -19,39 +19,31 @@ public class AudioServerClientHandler implements Runnable, AudioService {
     private Socket clientSocket = null;
 
     /**
-     * Returns the client ID currently in first position and sending an audio file
-     *
-     * @return client sender unique ID.
+     * {@inheritDoc}
      */
     public String getClientSenderID() {
         return(clientSenderID);
     }
 
     /**
-     * Sets the client ID currently in first position and sending an audio file
-     *
-     * @param id the client sender unique ID.
+     * {@inheritDoc}
      */
     public void setClientSenderID(String id) {
         clientSenderID = id;
     }
 
     /**
-     * Sets the client socket
-     *
-     * @param socket the client socket
-     */
-    public void setClientSocket(Socket socket) {
-        clientSocket = socket;
-    }
-
-    /**
-     * Returns the client socket
-     *
-     * @return the client socket
+     * {@inheritDoc}
      */
     public Socket getClientSocket() {
         return(clientSocket);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setClientSocket(Socket socket) {
+        clientSocket = socket;
     }
 
     public AudioServerClientHandler(Socket clientSocket) {
