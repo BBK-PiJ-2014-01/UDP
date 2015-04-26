@@ -44,8 +44,7 @@ public class AudioClientImpl implements AudioClient {
     @Override
     public String requestUniqueID() {
         System.out.println("[Request to Server] Unique ID?...");
-        String message = "requestUUID";
-        return(message);
+        return("requestUUID");
     }
 
     /**
@@ -54,8 +53,7 @@ public class AudioClientImpl implements AudioClient {
     @Override
     public String firstToConnect() {
         System.out.println("[Request to Server] Connection position?...");
-        String message = "requestROLE"+getClientID();
-        return(message);
+        return("requestROLE"+getClientID());
     }
 
     /**
@@ -64,8 +62,7 @@ public class AudioClientImpl implements AudioClient {
     @Override
     public String getProtocol() {
         System.out.println("[Request to Server] Protocol?...");
-        String message = "getPROTOCOL";
-        return(message);
+        return("getPROTOCOL");
     }
 
     /**
@@ -74,8 +71,7 @@ public class AudioClientImpl implements AudioClient {
     @Override
     public String notifyClosingConnection() {
         System.out.println("[Message to Server] Closing connection");
-        String message = "closeCONNECTION";
-        return(message);
+        return("closeCONNECTION");
     }
 
     /**
@@ -111,6 +107,7 @@ public class AudioClientImpl implements AudioClient {
             }
             if (position.equals("NOT FIRST")) {
                 receivedFile = UDPFileTransfer.receive();
+                playAudio(receivedFile);
             }
         } else {
             System.out.println("Protocol "+protocol+ " not supported by this client");
