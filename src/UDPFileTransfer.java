@@ -19,7 +19,10 @@ public interface UDPFileTransfer {
     final int portNumberUDP = 5000;
 
     /**
-     * Sends a file to a receiver on Port 5000, using the UDP protocol
+     * Sends a file in chunks of 32768 bytes to a receiver on Port 5000, using the UDP protocol
+     * To make sure the receiver receives all data packets and in order, the client:
+     * - waits receipt acknowledgement from the receiver after each data packet
+     * - attempts a maximum of three times sending the data packet again if no acknowledgement is received
      *
      * @param audioFile file transferred
      */

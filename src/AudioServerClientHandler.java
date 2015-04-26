@@ -15,8 +15,10 @@ public class AudioServerClientHandler implements Runnable, AudioService {
     private File relayedAudioFile = new File("./relayedFile.wav");
     private File nextRelayedAudioFile = new File("./nextRelayedFile.wav");
 
-    private String clientSenderID = null;
     private Socket clientSocket = null;
+    private String clientSenderID = null;
+    private boolean clientFirst;
+
 
     /**
      * {@inheritDoc}
@@ -46,9 +48,33 @@ public class AudioServerClientHandler implements Runnable, AudioService {
         clientSocket = socket;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean getClientFirst() {
+        return(clientFirst);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setClientFirst(String position) {
+        if (position.equals("FIRST"))
+            clientFirst = true;
+        else
+            clientFirst = false;
+    }
+
+    /**
+     * Constructor for the class AudioServerClientHandler
+     * Initialise the client sender ID to 'blank', clientFirst to 'False' and keeps track of the client socket
+     *
+     * @param clientSocket socket the client is connected to
+     */
     public AudioServerClientHandler(Socket clientSocket) {
         setClientSenderID("");
         setClientSocket(clientSocket);
+        clientFirst = false;
     }
 
     @Override
@@ -57,47 +83,26 @@ public class AudioServerClientHandler implements Runnable, AudioService {
         try(DataInputStream fromClientStream = new DataInputStream(getClientSocket().getInputStream());
             DataOutputStream toClientStream = new DataOutputStream(getClientSocket().getOutputStream())) {
 
-            String line = "";
-            String clientPosition = "";
-            String replyMessage = "";
+            String incomingMessage = "";
 
-            while (!line.equals("closeCONNECTION")) {
+            while (!incomingMessage.equals("closeCONNECTION")) {
 
-                line = fromClientStream.readUTF();
+                incomingMessage = fromClientStream.readUTF();
 
-                if (line.substring(0, 11).equals("requestUUID")) {
-                    String uniqueID = generateUniqueID();
-                    toClientStream.writeUTF(uniqueID);
-                    System.out.println("Client ID assigned: " + uniqueID);
-                    if (getClientSenderID().equals(""))
-                        setClientSenderID(uniqueID);
+                // Reply with UUID to client request for a unique ID
+                if (incomingMessage.substring(0, 11).equals("requestUUID"))
+                    toClientStream.writeUTF(generateUniqueID());
+
+                // Reply with position ("FIRST" or "NOT FIRST") to client request for position
+                if (incomingMessage.substring(0, 11).equals("requestROLE")) {
+                    toClientStream.writeUTF(indicateClientPosition(incomingMessage.substring(11)));
                 }
-                if (line.substring(0, 11).equals("requestROLE")) {
-                    String requestingClientID = line.substring(11);
-                    if (requestingClientID.equals(getClientSenderID()))
-                        clientPosition = "FIRST";
-                    else
-                        clientPosition = "NOT FIRST";
-                    System.out.println("Client Id="+requestingClientID+" position: "+clientPosition);
-                    toClientStream.writeUTF(clientPosition);
-                }
-                if (line.substring(0, 11).equals("getPROTOCOL")) {
-                    replyMessage = "UDP";
-                    toClientStream.writeUTF(replyMessage);
-                    System.out.println("Protocol requested: " + replyMessage);
-                    if (clientPosition.equals("FIRST")) {
-                        nextRelayedAudioFile = UDPFileTransfer.receive();
-                        try {
-                            //relayedAudioFile.createNewFile();
-                            Files.copy(nextRelayedAudioFile.toPath(),relayedAudioFile.toPath());
 
-                        } catch(IOException ex) {
-                            ex.printStackTrace();
-                        }
-                        setClientSenderID("");
-                    } else {
-                        UDPFileTransfer.send(relayedAudioFile);
-                    }
+                // Reply with message "UDP" to client request for file transfer communication protocol
+                if (incomingMessage.substring(0, 11).equals("getPROTOCOL")) {
+                    toClientStream.writeUTF(indicateCommunicationProtocol());
+                    // Opens UDP connection and sends/receives file depending on client position
+                    audioFileTransfer();
                 }
             }
         } catch (IOException ex) {
@@ -105,9 +110,62 @@ public class AudioServerClientHandler implements Runnable, AudioService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * Method synchronized to make sure than only one thread at a time has access and can set the client sender Id
+     */
     @Override
-    public String generateUniqueID() {
+    public synchronized String generateUniqueID() {
         UUID uniqueID = UUID.randomUUID();
-        return (uniqueID.toString());
+        String uniqueIDString = uniqueID.toString();
+        System.out.println("Client ID assigned: " + uniqueIDString);
+        if (getClientSenderID().equals(""))
+            setClientSenderID(uniqueIDString);
+        return (uniqueIDString);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String indicateClientPosition(String requestingClientID) {
+        String replyMessage;
+        if (requestingClientID.equals(getClientSenderID())) {
+            replyMessage = "FIRST";
+        } else
+            replyMessage = "NOT FIRST";
+        System.out.println("Client Id="+requestingClientID+" position: "+replyMessage);
+        setClientFirst(replyMessage);
+        return(replyMessage);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String indicateCommunicationProtocol() {
+        String replyMessage = "UDP";
+        System.out.println("Protocol requested: " + replyMessage);
+        return(replyMessage);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void audioFileTransfer() {
+        if (getClientFirst()) {
+            nextRelayedAudioFile = UDPFileTransfer.receive();
+            try {
+                //relayedAudioFile.createNewFile();
+                Files.copy(nextRelayedAudioFile.toPath(),relayedAudioFile.toPath());
+
+            } catch(IOException ex) {
+                ex.printStackTrace();
+            }
+            setClientSenderID("");
+        } else {
+            UDPFileTransfer.send(relayedAudioFile);
+        }
     }
 }
