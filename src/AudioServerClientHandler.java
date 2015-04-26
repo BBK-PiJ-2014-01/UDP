@@ -162,7 +162,7 @@ public class AudioServerClientHandler implements Runnable, AudioService {
         if (getClientFirst()) {
             nextRelayedAudioFile = UDPFileTransfer.receive();
             try {
-                //relayedAudioFile.createNewFile();
+                Files.deleteIfExists(relayedAudioFile.toPath());
                 Files.copy(nextRelayedAudioFile.toPath(),relayedAudioFile.toPath());
 
             } catch(IOException ex) {
