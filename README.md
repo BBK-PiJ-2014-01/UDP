@@ -30,8 +30,6 @@ Step 5:
     Protocol message: "closeCONNECTION"
     - Server close the thread handling the client
 
-Example when run:
-Screen shot on the server side:
-
+Screenshots of an example available in the Word document "ScreenShots.docx"
 
 
