@@ -1,5 +1,10 @@
 /**
  * Created by Pierre on 14/04/2015.
+ *
+ * Server class handling the connection with a client.
+ * Each client connection is handled as a thread (Runnable interface implemented)
+ *
+ * Communication over TCP/IP except for transferring files when UDP protocol is used
  */
 
 import java.io.DataInputStream;
