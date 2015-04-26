@@ -54,7 +54,7 @@ public class AudioClientLauncher {
             String protocol = fromServerStream.readUTF();
             System.out.println("[Response Server] Protocol: "+protocol);
 
-            // STEP4: Sends or receives audio file based on position provided by the server
+            // STEP4: Sends or receives audio file based on position & communication protocol provided by the server
             if (protocol.equals("UDP")) {
                 if (position.equals("FIRST")) {
                     File audioFile = new File("C:/firetrucks.wav");
