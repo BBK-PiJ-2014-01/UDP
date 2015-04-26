@@ -42,7 +42,7 @@ public class AudioClientImpl implements AudioClient {
      */
     @Override
     public String requestUniqueID() {
-        System.out.println("[Request Server] Unique ID...");
+        System.out.println("[Request Server] Unique ID?...");
         String message = "requestUUID";
         return(message);
     }
@@ -52,7 +52,7 @@ public class AudioClientImpl implements AudioClient {
      */
     @Override
     public String firstToConnect() {
-        System.out.println("[Request Server] Connection position...");
+        System.out.println("[Request Server] Connection position?...");
         String message = "requestROLE"+getClientID();
         return(message);
     }

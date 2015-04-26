@@ -11,7 +11,7 @@ public class TestPlayAudio {
     @Test
     public void tests_audioFileIsPlayed() {
         AudioClient ac = new AudioClientImpl();
-        File audioFile = new File("./firetrucks.wav");
+        File audioFile = new File("./Tests/firetrucks.wav");
         ac.playAudio(audioFile);
     }
 }
