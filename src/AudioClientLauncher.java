@@ -24,7 +24,7 @@ public class AudioClientLauncher {
         acl.launch();
     }
 
-    private void launch() {
+    public void launch() {
 
         try (
             // Opening connection to server on Port 2000

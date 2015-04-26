@@ -18,7 +18,7 @@ public class AudioServerLauncher {
         asl.launch();
     }
 
-    private void launch(){
+    public void launch(){
 
         // Opening connection to clients on Port 2000
         try(ServerSocket server = new ServerSocket(portNumberTCP)) {
