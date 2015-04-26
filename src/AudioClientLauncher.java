@@ -10,7 +10,8 @@ import java.net.Socket;
 
 public class AudioClientLauncher {
 
-    File receivedFile = new File("C:/ReceivedFile");
+    File receivedFile;
+    final int portNumberTCP = 2000;
 
     public static void main(String[] args) {
         AudioClientLauncher acl = new AudioClientLauncher();
@@ -22,22 +23,19 @@ public class AudioClientLauncher {
             // Creating the client object
             AudioClient ac = new AudioClientImpl();
             // Opening connection to server on Port 2000
-            Socket client = new Socket("localhost", 2000);
+            Socket client = new Socket("localhost", portNumberTCP);
             // Establishing input and output streams for communication with the server
             DataInputStream fromServerStream = new DataInputStream(client.getInputStream());
             DataOutputStream toServerStream = new DataOutputStream(client.getOutputStream());
             // Requests a unique ID
-            System.out.println("[Request Server] Unique ID...");
             toServerStream.writeUTF(ac.requestUniqueID());
             ac.setClientID(fromServerStream.readUTF());
             System.out.println("[Response Server] Assigned ID: "+ac.getClientID());
             // Requests if first to connect
-            System.out.println("[Request Server] Connection position...");
             toServerStream.writeUTF(ac.firstToConnect());
             String position = fromServerStream.readUTF();
             System.out.println("[Response Server] Position: "+position);
             // Requests which communication protocol to use for file transfer
-            System.out.println("[Request Server] Protocol?...");
             toServerStream.writeUTF(ac.getProtocol());
             String protocol = fromServerStream.readUTF();
             System.out.println("[Response Server] Protocol: "+protocol);

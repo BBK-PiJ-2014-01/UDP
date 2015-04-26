@@ -1,5 +1,7 @@
 /**
  * Created by Pierre on 03/04/2015.
+ *
+ * Implementation of the Interface AudioClient.
  */
 
 import javax.sound.sampled.AudioSystem;
@@ -40,6 +42,7 @@ public class AudioClientImpl implements AudioClient {
      */
     @Override
     public String requestUniqueID() {
+        System.out.println("[Request Server] Unique ID...");
         String message = "requestUUID";
         return(message);
     }
@@ -49,6 +52,7 @@ public class AudioClientImpl implements AudioClient {
      */
     @Override
     public String firstToConnect() {
+        System.out.println("[Request Server] Connection position...");
         String message = "requestROLE"+getClientID();
         return(message);
     }
@@ -58,6 +62,7 @@ public class AudioClientImpl implements AudioClient {
      */
     @Override
     public String getProtocol() {
+        System.out.println("[Request Server] Protocol?...");
         String message = "getPROTOCOL";
         return(message);
     }

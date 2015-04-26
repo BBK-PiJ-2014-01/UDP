@@ -19,28 +19,31 @@ import java.io.File;
 public interface AudioClient {
 
     /**
-     * Returns the client unique ID
+     * Returns the client universally unique ID
      *
      * @return client unique ID.
      */
     String getClientID();
 
     /**
-     * Sets the client unique ID
+     * Sets the client universally unique ID
      *
      * @param id the client unique ID.
      */
     void setClientID(String id);
 
     /**
-     * Requests for a unique ID
+     * Requests for a universally unique ID
+     * The client-server messaging protocol command is "requestUUID"
      *
-     * @return message request for a unique ID.
+     * @return message request for a universally unique ID.
      */
     String requestUniqueID();
 
     /**
      * Requests which process (sending or receiving) is assigned, based on first to connect to the server or not.
+     * The client-server messaging protocol command is "requestROLE" followed by the universally unique client ID.
+     *
      * If the client is first to connect, it is assigned a sender process
      * If the client is not first to connect, it is assigned a receiver process
      *
@@ -50,6 +53,7 @@ public interface AudioClient {
 
     /**
      * Requests which communication protocol to use for sending/receiving audio files
+     * The client-server messaging protocol command is "getPROTOCOL"
      *
      * @return message request for communication protocol to use.
      */

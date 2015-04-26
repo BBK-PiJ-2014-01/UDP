@@ -1,5 +1,6 @@
 /**
- * Created by Pierre on 11/04/2015
+ * Created by Pierre on 11/04/2015.
+ *
  * Utility methods for:
  * - converting files to byte arrays
  * - byte arrays to files

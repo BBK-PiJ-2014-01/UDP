@@ -1,5 +1,9 @@
 /**
  * Created by Pierre on 18/04/2015.
+ *
+ * Methods defined as static. Can be used by both clients and servers for sending/receiving files.
+ *
+ * Implementing static methods with full body is a new feature of Interfaces from Java7.
  */
 
 import java.io.File;
@@ -12,7 +16,7 @@ public interface UDPFileTransfer {
 
     final int maxSendingAttempt = 3;
     final int packetSize = 1024 * 32;
-    final int portNumber = 5000;
+    final int portNumberUDP = 5000;
 
     /**
      * Sends a file to a receiver on Port 5000, using the UDP protocol
@@ -40,7 +44,7 @@ public interface UDPFileTransfer {
                 String receiverReply = null;
                 int attempt = 0;
                 do {
-                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, portNumber);
+                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, portNumberUDP);
                     sendingSocket.send(sendPacket);
                     attempt++;
                     DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
@@ -57,7 +61,7 @@ public interface UDPFileTransfer {
             byte[] clientMessage = message.getBytes();
             byte[] interimPacketLength = ByteBuffer.allocate(4).putInt(clientMessage.length).array();
             sendData = FileFactory.concatenateByteArrays(interimPacketLength,clientMessage);
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, portNumber);
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, portNumberUDP);
             sendingSocket.send(sendPacket);
             System.out.println("File uploaded!");
 
@@ -79,7 +83,7 @@ public interface UDPFileTransfer {
         File receivedFile = null;
         byte[] dataToReceive = null;
 
-        try(DatagramSocket receivingSocket = new DatagramSocket(portNumber)) {
+        try(DatagramSocket receivingSocket = new DatagramSocket(portNumberUDP)) {
 
             byte[] senderMessage;
             String fromSenderTrimmed;

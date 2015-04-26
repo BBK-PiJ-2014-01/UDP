@@ -1,15 +1,17 @@
 /**
  * Created by Pierre on 03/04/2015.
+ *
  * Audio server launcher.
  * Listen for TCP connection and place further handling of connected client in a separate thread
  */
 
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class AudioServerLauncher {
+
+    final int portNumberTCP = 2000;
 
     public static void main(String[] args) {
         AudioServerLauncher asl = new AudioServerLauncher();
@@ -19,7 +21,7 @@ public class AudioServerLauncher {
     private void launch(){
 
         // Opening connection to clients on Port 2000
-        try(ServerSocket server = new ServerSocket(2000)) {
+        try(ServerSocket server = new ServerSocket(portNumberTCP)) {
             System.out.println("AudioServer started...");
             while (true) {
                 Socket client = null;
