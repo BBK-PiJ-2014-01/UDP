@@ -21,9 +21,10 @@ public class AudioServerClientHandler implements Runnable, AudioService {
     private File nextRelayedAudioFile;
 
     private Socket clientSocket = null;
-    private String clientSenderID = null;
     private boolean clientFirst;
 
+    // Static variable as only one client sender at all times, regardless of the number of threads
+    private static String clientSenderID = null;
 
     /**
      * {@inheritDoc}
@@ -79,6 +80,9 @@ public class AudioServerClientHandler implements Runnable, AudioService {
         clientFirst = false;
     }
 
+    /**
+     * Method handling the communication with the connected client over TCP
+     */
     @Override
     public void run() {
         // Establishing input and output streams for communication with the client
