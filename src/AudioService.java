@@ -1,16 +1,20 @@
 
 /**
- * Created by Pierre on 02/04/2015
- * Implementation of the Audio Service listening to multiple clients.
+ * Created by Pierre on 02/04/2015.
  *
- * First client to connect sends a looping audio recording to the server
- * The server relays the audio stream to all the clients who connect after this.
+ * Interface definition for a audio server class
+ *
  */
 
 import java.io.File;
 
 public interface AudioService {
-    
+
+    /**
+     * Generates a type 4 (pseudo randomly generated) Universally Unique ID
+     *
+     * @return a universally unique ID.
+     */
     String generateUniqueID();
 
 }

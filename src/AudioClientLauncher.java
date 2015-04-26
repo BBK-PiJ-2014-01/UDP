@@ -5,7 +5,7 @@
  * - Connects to server via TCP
  * - requests UUID
  * - requests Position in queue
- * - requests communication protocol for sending/receiving files (UDP expected)
+ * - requests communication protocol for sending/receiving files (UDP only expected)
  * - Opens UDP connection and sends/receives audio files based on position in queue
  * - Disconnects from server when finished
  */
@@ -38,18 +38,23 @@ public class AudioClientLauncher {
 
             // Creating the client object
             AudioClient ac = new AudioClientImpl();
-            // Requests a unique ID
+
+            // STEP1: Requests the server a universally unique ID
             toServerStream.writeUTF(ac.requestUniqueID());
             ac.setClientID(fromServerStream.readUTF());
             System.out.println("[Response Server] Assigned ID: "+ac.getClientID());
-            // Requests if first to connect
+
+            // STEP2: Requests the server if first to connect
             toServerStream.writeUTF(ac.firstToConnect());
             String position = fromServerStream.readUTF();
             System.out.println("[Response Server] Position: "+position);
-            // Requests which communication protocol to use for file transfer
+
+            // STEP3: Requests the server which communication protocol to use for file transfer
             toServerStream.writeUTF(ac.getProtocol());
             String protocol = fromServerStream.readUTF();
             System.out.println("[Response Server] Protocol: "+protocol);
+
+            // STEP4: Sends or receives audio file based on position provided by the server
             if (protocol.equals("UDP")) {
                 if (position.equals("FIRST")) {
                     File audioFile = new File("C:/firetrucks.wav");
@@ -62,8 +67,8 @@ public class AudioClientLauncher {
                 System.out.println("Protocol "+protocol+ " not supported by this client");
             }
 
-            toServerStream.writeUTF("closeCONNECTION");
-            System.out.println("Connection closed");
+            // STEP5: Notifies the server the end of the client connection
+            toServerStream.writeUTF(ac.notifyClosingConnection());
 
         } catch (IOException ex) {
             System.out.println(ex.getMessage());

@@ -25,7 +25,11 @@ Step 4:
     - Bother clients and server opens a UDP connection.
     If the client was first to connect, it sends an audio file to the server
     If the client was not first, it receives the audio file relayed by the server, from the first connected client.
-    
+Step 5:
+    - Client notifies the server that it is disconnecting 
+    Protocol message: "closeCONNECTION"
+    - Server close the thread handling the client
+
 Example when run:
 Screen shot on the server side:
 

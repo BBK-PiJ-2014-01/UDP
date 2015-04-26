@@ -9,7 +9,7 @@
  * - Getter and setter for the Unique client ID provided by the server
  *      getClientID(), setClientID()
  * - Methods supporting the communication protocol with the server
- *      requestUniqueID(), firstToConnect(), getProtocol()
+ *      requestUniqueID(), firstToConnect(), getProtocol(), notifyClosingConnection()
  * - Method to play audio files (.wav format) received from the server
  *      playAudio()
  */
@@ -58,6 +58,14 @@ public interface AudioClient {
      * @return message request for communication protocol to use.
      */
     String getProtocol();
+
+    /**
+     * Notifies that the client connection will be closed
+     * The client-server messaging protocol command is "closeCONNECTION"
+     *
+     * @return message notification of connection closure.
+     */
+    String notifyClosingConnection();
 
     /**
      * Plays an audio file (Format .WAV)

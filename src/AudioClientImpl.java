@@ -42,7 +42,7 @@ public class AudioClientImpl implements AudioClient {
      */
     @Override
     public String requestUniqueID() {
-        System.out.println("[Request Server] Unique ID?...");
+        System.out.println("[Request to Server] Unique ID?...");
         String message = "requestUUID";
         return(message);
     }
@@ -52,7 +52,7 @@ public class AudioClientImpl implements AudioClient {
      */
     @Override
     public String firstToConnect() {
-        System.out.println("[Request Server] Connection position?...");
+        System.out.println("[Request to Server] Connection position?...");
         String message = "requestROLE"+getClientID();
         return(message);
     }
@@ -62,8 +62,18 @@ public class AudioClientImpl implements AudioClient {
      */
     @Override
     public String getProtocol() {
-        System.out.println("[Request Server] Protocol?...");
+        System.out.println("[Request to Server] Protocol?...");
         String message = "getPROTOCOL";
+        return(message);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String notifyClosingConnection() {
+        System.out.println("[Message to Server] Closing connection");
+        String message = "closeCONNECTION";
         return(message);
     }
 
